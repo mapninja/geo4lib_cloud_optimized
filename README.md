@@ -252,6 +252,16 @@ If a dataset does not appear:
 - Open the SDR deposit link to confirm the source record is available.
 - If the file is very large, give the viewer a moment to read the remote index.
 
+For the FlatGeobuf example, use the `raw.githubusercontent.com` URL exactly:
+
+https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
+
+Do not use the GitHub web redirect form:
+
+https://github.com/mapninja/geo4lib_cloud_optimized/raw/refs/heads/main/stanford-vx572wx7854-geojson.fgb
+
+The GitHub web route redirects to the raw file, but some browser-based geospatial tools cannot follow that redirect because the redirect response does not provide the CORS headers they need.
+
 If the map appears but the data is hard to find:
 
 - Use the viewer's zoom-to-layer or fit-to-data option if available.
