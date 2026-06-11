@@ -38,7 +38,7 @@
     
     <script>
         // Initialize PMTiles protocol
-        const pmtilesProtocol = new PMTiles(new URL('https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/santa_clara_roads.pmtiles').href);
+        const pmtilesProtocol = new PMTiles(new URL('https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/santa_clara_roads.pmtiles').href);
         
         // Create map
         const map = new maplibregl.Map({
@@ -54,7 +54,7 @@
             // Add historical map COG as raster source
             map.addSource('historical-map', {
                 type: 'raster',
-                url: 'https://PLACEHOLDER_COG_URL/santa_clara_1896_cog.tif',
+                url: 'https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/santa_clara_1896_cog.tif',
                 tileSize: 256
             });
             
