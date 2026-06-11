@@ -4,6 +4,35 @@ This workshop is a simple, browser-based introduction to cloud-optimized geospat
 
 The goal is to understand why formats such as Cloud-Optimized GeoTIFF and PMTiles are useful for web mapping: they let a browser request only the pieces of a large dataset needed for the current map view.
 
+## Learning Objectives
+
+By the end of this workshop, participants should be able to:
+
+1. Explain the difference between raster data and vector tile data.
+2. Open public cloud-optimized geospatial files in a browser-based map viewer.
+3. Describe why HTTP range requests matter for large geospatial files.
+4. Identify COG and PMTiles as formats designed for efficient web access.
+5. Recognize FlatGeobuf as another web-friendly vector format.
+6. Compare GeoJSON, FlatGeobuf, PMTiles, and COG as web-map data sources.
+7. Connect a web-accessible file URL back to its SDR deposit, collection record, or repository source.
+
+## Why Cloud-Optimized Formats Matter
+
+Traditional geospatial files can be very large. If a browser had to download an entire orthophoto or a global OpenStreetMap dataset before drawing anything, web mapping would be slow or impossible for many teaching and research uses.
+
+Cloud-optimized formats solve this by organizing the data so software can ask for only the part it needs.
+
+For example:
+
+```text
+The map opens.
+The viewer reads a small index from the remote file.
+The viewer requests only the image tiles or vector tiles visible on screen.
+As the user pans and zooms, the viewer requests additional pieces as needed.
+```
+
+This is the basic idea behind HTTP range requests. The browser or mapping library can request a byte range from a remote file instead of downloading the whole file.
+
 ## Workshop Platform
 
 We will use GeoLibre Viewer:
@@ -82,108 +111,32 @@ Citation:
 
 Maples, Stacey D. (2015). Clowns of America, International Membership Point GeoJSON (anonymized). Stanford Digital Repository. Available at: http://purl.stanford.edu/vx572wx7854.
 
-## Learning Objectives
+### 5. Stanford Campus Sample Data from This Repository
 
-By the end of this workshop, participants should be able to:
+This repository also includes a small Stanford campus data bundle in the `data/` folder. These files are useful for comparing how GeoLibre Viewer handles common web-mapping inputs from the same place.
 
-1. Explain the difference between raster data and vector tile data.
-2. Open public cloud-optimized geospatial files in a browser-based map viewer.
-3. Describe why HTTP range requests matter for large geospatial files.
-4. Identify COG and PMTiles as formats designed for efficient web access.
-5. Recognize FlatGeobuf as another web-friendly vector format.
-6. Connect a web-accessible file URL back to its SDR deposit, collection record, or repository source.
+Stanford campus boundary GeoJSON:
 
-## Why Cloud-Optimized Formats Matter
+https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/stanford_campus.geojson
 
-Traditional geospatial files can be very large. If a browser had to download an entire orthophoto or a global OpenStreetMap dataset before drawing anything, web mapping would be slow or impossible for many teaching and research uses.
+Stanford public art GeoJSON:
 
-Cloud-optimized formats solve this by organizing the data so software can ask for only the part it needs.
+https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/stanford_public_art.geojson
 
-For example:
+Stanford campus IRG Cloud-Optimized GeoTIFF:
 
-```text
-The map opens.
-The viewer reads a small index from the remote file.
-The viewer requests only the image tiles or vector tiles visible on screen.
-As the user pans and zooms, the viewer requests additional pieces as needed.
-```
+https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/stanford_campus_irg.tif
 
-This is the basic idea behind HTTP range requests. The browser or mapping library can request a byte range from a remote file instead of downloading the whole file.
+The campus boundary is a single polygon feature. The public art layer contains 65 point features. The IRG raster is a three-band Cloud-Optimized GeoTIFF with internal overviews, so it can be explored in the same browser-based workflow as the SDR raster examples.
 
-## Activity 1: Explore the Orthophoto COG
-
-1. Open GeoLibre Viewer:
-
-   https://viewer.geolibre.app/
-2. Add the COG URL:
-
-   https://stacks.stanford.edu/file/vq494qx9344/odm_orthophoto_COG_d.tif
-3. Zoom and pan around the image.
-4. Observe what happens as the viewer loads imagery at different zoom levels.
-
-Discussion prompts:
-
-- What details become visible as you zoom in?
-- Why is this file a raster dataset rather than a vector dataset?
-- What would be difficult about using this image if the viewer had to download the whole file first?
-
-## Activity 2: Explore the OpenStreetMap PMTiles Dataset
-
-1. Open GeoLibre Viewer:
-
-   https://viewer.geolibre.app/
-2. Add the PMTiles URL:
-
-   https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
-3. Navigate to different parts of the world.
-4. Change zoom levels and observe how the map detail changes.
-
-Discussion prompts:
-
-- What types of features appear at low zoom levels?
-- What additional features appear as you zoom in?
-- Why are vector tiles useful for a dataset as large as OpenStreetMap?
-
-## Activity 3: Explore the Castle Fire Prefire NAIP Image
-
-1. Open GeoLibre Viewer:
-
-   https://viewer.geolibre.app/
-2. Add the NAIP imagery URL:
-
-   https://stacks.stanford.edu/file/kv186fx7335/m_3611854_se_11_060_20200726.tif
-3. Zoom and pan around the image.
-4. Compare the image content with the O'Donohue Farm orthophoto.
-
-Discussion prompts:
-
-- What landscape features can you identify before the fire?
-- How is this raster image similar to the farm orthophoto?
-- How is this raster image different in scale, subject, or interpretation?
-- Why might prefire imagery be useful for environmental analysis?
-
-## Activity 4: Explore the FlatGeobuf Point Dataset
-
-1. Open GeoLibre Viewer:
-
-   https://viewer.geolibre.app/
-2. Add the FlatGeobuf URL:
-
-   https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
-3. Zoom to the layer if the viewer provides a fit-to-data option.
-4. Click or inspect individual point features if the viewer supports feature inspection.
-
-Discussion prompts:
-
-- How does a point dataset look different from aerial imagery?
-- What kinds of attributes are attached to the points?
-- Why would an anonymized teaching dataset be useful for learning geocoding and attribute cleanup?
-- Why might FlatGeobuf be useful when sharing vector features on the web?
 
 ## Key Terms
 
 Cloud-Optimized GeoTIFF (COG):
 A GeoTIFF arranged so software can efficiently read small parts of the raster over the web.
+
+GeoJSON:
+A text-based vector format commonly used for sharing points, lines, and polygons on the web.
 
 PMTiles:
 A single-file archive for vector map tiles, designed so web maps can request only the tiles needed for the current view.
@@ -213,10 +166,11 @@ Stanford's repository for preserving, describing, and sharing scholarly and libr
 6. Discuss raster interpretation at different scales.
 7. Load the FlatGeobuf point dataset from GitHub.
 8. Discuss feature datasets and web-friendly vector formats.
-9. Load the SDR PMTiles OpenStreetMap dataset.
-10. Discuss vector tiles and efficient feature rendering.
-11. Compare the raster and vector examples.
-12. Connect each direct file URL back to its SDR deposit, collection record, or repository source.
+9. Load the Stanford campus GeoJSON and COG files from the repository `data/` folder.
+10. Compare point, polygon, raster, and tile-based layers.
+11. Load the SDR PMTiles OpenStreetMap dataset.
+12. Discuss vector tiles and efficient feature rendering.
+13. Connect each direct file URL back to its SDR deposit, collection record, or repository source.
 
 ## Troubleshooting
 
@@ -244,6 +198,7 @@ If the map appears but the data is hard to find:
 - For the orthophoto, zoom near the Stanford Educational Farm.
 - For the Castle Fire NAIP imagery, use the viewer's fit-to-data option if available because the site is not on the Stanford campus.
 - For the FlatGeobuf point dataset, use fit-to-data because the features cover a broad geographic extent.
+- For the Stanford campus data files, zoom near Stanford University or use fit-to-data for the campus boundary.
 - For OpenStreetMap PMTiles, try zooming into a familiar city or campus area.
 
 ## Source Links
@@ -256,6 +211,9 @@ If the map appears but the data is hard to find:
 - Clowns of America membership SDR record: http://purl.stanford.edu/vx572wx7854
 - Clowns of America FlatGeobuf file: https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
 - Source GeoJSON converted in this repository: `stanford-vx572wx7854-geojson.geojson`
+- Stanford campus boundary GeoJSON: https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/stanford_campus.geojson
+- Stanford public art GeoJSON: https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/stanford_public_art.geojson
+- Stanford campus IRG COG: https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/data/stanford_campus_irg.tif
 - OpenStreetMap SDR deposit: https://purl.stanford.edu/hf224mw4004
 - OpenStreetMap PMTiles file: https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
 - PMTiles project: https://github.com/protomaps/PMTiles
