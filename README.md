@@ -56,6 +56,32 @@ This dataset is National Agriculture Imagery Program (NAIP) aerial imagery for t
 
 In this workshop, it gives us a second raster example. Comparing the O'Donohue Farm orthophoto with the Castle Fire prefire NAIP image helps show that raster data can support many different kinds of interpretation, from campus-scale land use to landscape-scale fire context.
 
+### 4. Clowns of America Membership Point Dataset as FlatGeobuf
+
+GitHub raw file URL:
+
+https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
+
+Original SDR record:
+
+http://purl.stanford.edu/vx572wx7854
+
+Source GeoJSON file converted for this repository:
+
+`stanford-vx572wx7854-geojson.geojson`
+
+This point dataset was created from an anonymized Clowns of America International membership database obtained in 2007 from Clowns of America, International, for teaching use at Stanford's Geospatial Center.
+
+The original table was geocoded by ZIP Code using OpenRefine and the Geonames.org PostalCodes API. Attributes include fields from the original table, such as `City`, `ZipCode`, `Clown_Name`, and `Country`, along with geocoding fields such as `admname1`, `adm1`, `adm2`, `placename`, `longitude`, and `latitude`.
+
+The attribute `Clown-Na_1` stores cleaned name values produced with OpenRefine's "Cluster and Edit" operation. For example, spelling variants such as "Co Co" and "Co-Co" could be collapsed into a shared value such as "CoCo" for name frequency analysis.
+
+For this workshop, the original GeoJSON has been converted to FlatGeobuf. FlatGeobuf is a cloud-friendly vector format that can be read efficiently by web mapping tools, which makes it useful for exploring point features directly from a single remote file.
+
+Citation:
+
+Maples, Stacey D. (2015). Clowns of America, International Membership Point GeoJSON (anonymized). Stanford Digital Repository. Available at: http://purl.stanford.edu/vx572wx7854.
+
 ## Learning Objectives
 
 By the end of this workshop, participants should be able to:
@@ -64,7 +90,8 @@ By the end of this workshop, participants should be able to:
 2. Open public cloud-optimized geospatial files in a browser-based map viewer.
 3. Describe why HTTP range requests matter for large geospatial files.
 4. Identify COG and PMTiles as formats designed for efficient web access.
-5. Connect a web-accessible file URL back to its SDR deposit or collection record.
+5. Recognize FlatGeobuf as another web-friendly vector format.
+6. Connect a web-accessible file URL back to its SDR deposit, collection record, or repository source.
 
 ## Why Cloud-Optimized Formats Matter
 
@@ -144,17 +171,38 @@ Discussion prompts:
 - How is this raster image different in scale, subject, or interpretation?
 - Why might prefire imagery be useful for environmental analysis?
 
-## Activity 4: Compare COG, GeoTIFF, and PMTiles
+## Activity 4: Explore the FlatGeobuf Point Dataset
+
+1. Open GeoLibre Viewer:
+
+   https://viewer.geolibre.app/
+
+2. Add the FlatGeobuf URL:
+
+   https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
+
+3. Zoom to the layer if the viewer provides a fit-to-data option.
+
+4. Click or inspect individual point features if the viewer supports feature inspection.
+
+Discussion prompts:
+
+- How does a point dataset look different from aerial imagery?
+- What kinds of attributes are attached to the points?
+- Why would an anonymized teaching dataset be useful for learning geocoding and attribute cleanup?
+- Why might FlatGeobuf be useful when sharing vector features on the web?
+
+## Activity 5: Compare COG, GeoTIFF, PMTiles, and FlatGeobuf
 
 Use the examples to compare raster and vector cloud-optimized formats.
 
-| Question | O'Donohue Farm COG | Castle Fire Prefire NAIP | OpenStreetMap PMTiles |
-| --- | --- | --- | --- |
-| What kind of data is it? | Raster imagery | Raster imagery | Vector tiles |
-| What does the map draw? | Pixels from an aerial image | Pixels from aerial imagery | Points, lines, and polygons |
-| What is it good for? | Campus-scale visual interpretation and basemaps | Prefire landscape interpretation | Roads, buildings, labels, boundaries, analysis layers |
-| How does it support web access? | Internal tiling and overviews | Remote GeoTIFF access in the viewer | Internal tile index and tile archive |
-| What SDR record describes it? | https://purl.stanford.edu/vq494qx9344 | https://purl.stanford.edu/kv186fx7335 | https://purl.stanford.edu/hf224mw4004 |
+| Question | O'Donohue Farm COG | Castle Fire Prefire NAIP | OpenStreetMap PMTiles | FlatGeobuf Points |
+| --- | --- | --- | --- | --- |
+| What kind of data is it? | Raster imagery | Raster imagery | Vector tiles | Vector features |
+| What does the map draw? | Pixels from an aerial image | Pixels from aerial imagery | Points, lines, and polygons | Points with attributes |
+| What is it good for? | Campus-scale visual interpretation and basemaps | Prefire landscape interpretation | Roads, buildings, labels, boundaries, analysis layers | Teaching geocoding, attribute cleanup, and point mapping |
+| How does it support web access? | Internal tiling and overviews | Remote GeoTIFF access in the viewer | Internal tile index and tile archive | Spatially indexed binary vector file |
+| What record or source describes it? | https://purl.stanford.edu/vq494qx9344 | https://purl.stanford.edu/kv186fx7335 | https://purl.stanford.edu/hf224mw4004 | This GitHub repository |
 
 ## Key Terms
 
@@ -163,6 +211,9 @@ A GeoTIFF arranged so software can efficiently read small parts of the raster ov
 
 PMTiles:
 A single-file archive for vector map tiles, designed so web maps can request only the tiles needed for the current view.
+
+FlatGeobuf:
+A single-file vector format that stores features in a compact binary layout with a spatial index for efficient map access.
 
 Raster data:
 Grid-based data made of pixels. Examples include aerial photographs, satellite imagery, scanned maps, and elevation models.
@@ -184,10 +235,12 @@ Stanford's repository for preserving, describing, and sharing scholarly and libr
 4. Discuss raster data and efficient image access.
 5. Load the SDR Castle Fire prefire NAIP imagery.
 6. Discuss raster interpretation at different scales.
-7. Load the SDR PMTiles OpenStreetMap dataset.
-8. Discuss vector tiles and efficient feature rendering.
-9. Compare the raster and vector examples.
-10. Connect each direct file URL back to its SDR deposit or collection record.
+7. Load the FlatGeobuf point dataset from GitHub.
+8. Discuss feature datasets and web-friendly vector formats.
+9. Load the SDR PMTiles OpenStreetMap dataset.
+10. Discuss vector tiles and efficient feature rendering.
+11. Compare the raster and vector examples.
+12. Connect each direct file URL back to its SDR deposit, collection record, or repository source.
 
 ## Troubleshooting
 
@@ -204,6 +257,7 @@ If the map appears but the data is hard to find:
 - Use the viewer's zoom-to-layer or fit-to-data option if available.
 - For the orthophoto, zoom near the Stanford Educational Farm.
 - For the Castle Fire NAIP imagery, use the viewer's fit-to-data option if available because the site is not on the Stanford campus.
+- For the FlatGeobuf point dataset, use fit-to-data because the features cover a broad geographic extent.
 - For OpenStreetMap PMTiles, try zooming into a familiar city or campus area.
 
 ## Source Links
@@ -213,9 +267,13 @@ If the map appears but the data is hard to find:
 - Orthophoto COG file: https://stacks.stanford.edu/file/vq494qx9344/odm_orthophoto_COG_d.tif
 - Castle Fire NAIP SDR collection: https://purl.stanford.edu/kv186fx7335
 - Castle Fire prefire NAIP file: https://stacks.stanford.edu/file/kv186fx7335/m_3611854_se_11_060_20200726.tif
+- Clowns of America membership SDR record: http://purl.stanford.edu/vx572wx7854
+- Clowns of America FlatGeobuf file: https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
+- Source GeoJSON converted in this repository: `stanford-vx572wx7854-geojson.geojson`
 - OpenStreetMap SDR deposit: https://purl.stanford.edu/hf224mw4004
 - OpenStreetMap PMTiles file: https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
 - PMTiles project: https://github.com/protomaps/PMTiles
+- FlatGeobuf project: https://flatgeobuf.org/
 - Cloud-Optimized GeoTIFF overview: https://www.cogeo.org/
 
 ## License and Use
