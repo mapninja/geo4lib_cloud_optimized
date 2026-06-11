@@ -115,13 +115,10 @@ This is the basic idea behind HTTP range requests. The browser or mapping librar
 1. Open GeoLibre Viewer:
 
    https://viewer.geolibre.app/
-
 2. Add the COG URL:
 
    https://stacks.stanford.edu/file/vq494qx9344/odm_orthophoto_COG_d.tif
-
 3. Zoom and pan around the image.
-
 4. Observe what happens as the viewer loads imagery at different zoom levels.
 
 Discussion prompts:
@@ -135,13 +132,10 @@ Discussion prompts:
 1. Open GeoLibre Viewer:
 
    https://viewer.geolibre.app/
-
 2. Add the PMTiles URL:
 
    https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
-
 3. Navigate to different parts of the world.
-
 4. Change zoom levels and observe how the map detail changes.
 
 Discussion prompts:
@@ -155,13 +149,10 @@ Discussion prompts:
 1. Open GeoLibre Viewer:
 
    https://viewer.geolibre.app/
-
 2. Add the NAIP imagery URL:
 
    https://stacks.stanford.edu/file/kv186fx7335/m_3611854_se_11_060_20200726.tif
-
 3. Zoom and pan around the image.
-
 4. Compare the image content with the O'Donohue Farm orthophoto.
 
 Discussion prompts:
@@ -176,13 +167,10 @@ Discussion prompts:
 1. Open GeoLibre Viewer:
 
    https://viewer.geolibre.app/
-
 2. Add the FlatGeobuf URL:
 
    https://raw.githubusercontent.com/mapninja/geo4lib_cloud_optimized/main/stanford-vx572wx7854-geojson.fgb
-
 3. Zoom to the layer if the viewer provides a fit-to-data option.
-
 4. Click or inspect individual point features if the viewer supports feature inspection.
 
 Discussion prompts:
@@ -191,18 +179,6 @@ Discussion prompts:
 - What kinds of attributes are attached to the points?
 - Why would an anonymized teaching dataset be useful for learning geocoding and attribute cleanup?
 - Why might FlatGeobuf be useful when sharing vector features on the web?
-
-## Activity 5: Compare COG, GeoTIFF, PMTiles, and FlatGeobuf
-
-Use the examples to compare raster and vector cloud-optimized formats.
-
-| Question | O'Donohue Farm COG | Castle Fire Prefire NAIP | OpenStreetMap PMTiles | FlatGeobuf Points |
-| --- | --- | --- | --- | --- |
-| What kind of data is it? | Raster imagery | Raster imagery | Vector tiles | Vector features |
-| What does the map draw? | Pixels from an aerial image | Pixels from aerial imagery | Points, lines, and polygons | Points with attributes |
-| What is it good for? | Campus-scale visual interpretation and basemaps | Prefire landscape interpretation | Roads, buildings, labels, boundaries, analysis layers | Teaching geocoding, attribute cleanup, and point mapping |
-| How does it support web access? | Internal tiling and overviews | Remote GeoTIFF access in the viewer | Internal tile index and tile archive | Spatially indexed binary vector file |
-| What record or source describes it? | https://purl.stanford.edu/vq494qx9344 | https://purl.stanford.edu/kv186fx7335 | https://purl.stanford.edu/hf224mw4004 | This GitHub repository |
 
 ## Key Terms
 
