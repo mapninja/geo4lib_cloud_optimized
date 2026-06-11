@@ -1,199 +1,223 @@
-# Cloud-Optimized Geospatial Data for Web Mapping
+# Exploring Cloud-Optimized Geospatial Formats from the Stanford Digital Repository
 
-A workshop on preparing geospatial data in cloud-optimized formats and serving them through HTTP range requests for efficient web-based visualization.
+This workshop is a simple, browser-based introduction to cloud-optimized geospatial data. Instead of downloading data or running a conversion workflow, we will explore public datasets from the Stanford Digital Repository (SDR) directly in a web map.
 
-## Concept
+The goal is to understand why formats such as Cloud-Optimized GeoTIFF and PMTiles are useful for web mapping: they let a browser request only the pieces of a large dataset needed for the current map view.
 
-This workshop demonstrates how to transform traditional geospatial data formats into cloud-optimized alternatives that enable efficient remote access via HTTP. The resulting web application can fetch only the data needed to render the current map view, dramatically reducing bandwidth and improving performance.
+## Workshop Platform
 
-**Key advantages:**
-- **Reduced bandwidth**: Only fetch data for the current viewport
-- **HTTP range requests**: Access specific portions of files without full download
-- **No spatial index required**: Cloud-optimized formats include embedded indices
-- **Open standards**: Works with existing web standards and libraries
+We will use GeoLibre Viewer:
 
-## Technical Overview
+https://viewer.geolibre.app/
 
-### Cloud-Optimized Formats
+GeoLibre Viewer provides a simple interface for opening many geospatial data formats in a web map context. For this workshop, it lets us explore remote cloud-optimized files by pasting in public URLs.
 
-**PMTiles**: A cloud-optimized vector tile format that bundles all tiles into a single file. Tiles are indexed internally, allowing HTTP range requests to fetch only the needed tiles.
-- Ideal for: Vector data (roads, boundaries, features)
-- Source: [pmtiles.io](https://pmtiles.io/)
+## Datasets
 
-**COG (Cloud-Optimized GeoTIFF)**: A standard GeoTIFF organized with overviews and tiled layout to enable efficient remote access.
-- Ideal for: Raster data (imagery, elevation, historical maps)
-- Benefits: Full GDAL/GIS software compatibility
+### 1. Orthophoto of O'Donohue Family Stanford Educational Farm
 
-### Data Pipeline
+SDR deposit:
 
-```
-Original Data → Examination → Format Conversion → Cloud Storage → Web Access
-  (Shapefiles)   (GDAL Info)   (PMTiles/COG)    (HTTP URLs)    (MapLibre)
-```
+https://purl.stanford.edu/vq494qx9344
 
-## Getting Started
+Cloud-Optimized GeoTIFF:
 
-### Prerequisites
-- Python 3.8+
-- GDAL (4.0+) - handles both raster and vector formats
-- Web browser with support for HTTP range requests
-- Git (for pushing to GitHub and enabling Pages)
+https://stacks.stanford.edu/file/vq494qx9344/odm_orthophoto_COG_d.tif
 
-### Data Preparation
+This is an orthophoto, which is an aerial image that has been corrected so it lines up with map coordinates. In this workshop, it represents the raster example: a pixel-based dataset where each location is represented by image values.
 
-<a target="_blank" href="https://colab.research.google.com/github/mapninja/geo4lib_cloud_optimized/blob/main/data-preparation.ipynb">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
+The file is a Cloud-Optimized GeoTIFF, often shortened to COG. A COG is still a GeoTIFF, but it is organized internally so web tools can read small parts of the file over HTTP instead of downloading the entire image first.
 
-Use the provided Jupyter notebook (`data-preparation.ipynb`) to:
+### 2. OpenStreetMap PMTiles
 
-1. **Examine existing data**: Inspect shapefile and raster metadata
-2. **Convert vector data**: Transform shapefiles → FlatGeoBuf → PMTiles
-3. **Convert raster data**: Optimize GeoTIFFs to COG format
-4. **Download processed data**: Save locally for uploading to GitHub
+SDR deposit:
 
-The notebook includes detailed explanations and can be run in Google Colab or locally.
+https://purl.stanford.edu/hf224mw4004
 
-### Web Application
+PMTiles file:
 
-The `index.html` file provides a complete MapLibre-based web map that:
-- Loads a basemap (OpenStreetMap tiles)
-- Adds cloud-optimized layers via HTTP URLs
-- Includes full inline documentation
-- Supports zoom/pan interactions
-- Demonstrates performance with remote data access
+https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
 
-### Deployment
+This dataset contains OpenStreetMap data packaged as PMTiles. OpenStreetMap is a global, community-created map dataset containing roads, buildings, water, land use, boundaries, places, and many other mapped features.
 
-The simplest deployment path uses GitHub:
+PMTiles is a single-file vector tile format. Instead of storing every map tile as a separate file, PMTiles stores tiles and their index together in one file. A web map can request only the tile bytes it needs for the current zoom level and map extent.
 
-1. Push all files to a GitHub repository
-2. Enable GitHub Pages (Settings → Pages → Main branch)
-3. Access your map at `https://[username].github.io/[repo]/`
+### 3. NAIP Imagery of the Castle Fire Site - Prefire
 
-GitHub serves files with proper HTTP headers, enabling range requests directly from a GitHub Pages URL.
+SDR collection:
 
-## File Structure
+https://purl.stanford.edu/kv186fx7335
 
-```
-.
-├── README.md                    # This file
-├── index.html                   # Complete web map application
-├── data-preparation.ipynb       # Data conversion workflow
-├── data/
-│   ├── pmtiles-roads.json       # Style definition for PMTiles layer
-│   ├── stanford_campus.geojson  # Sample vector data
-│   ├── stanford_public_art.geojson
-│   ├── RoadCenterLine_20260610/ # Source shapefile (Santa Clara roads)
-│   └── santa_clara_roads.pmtiles # Output: cloud-optimized vector tiles
-└── scratch/                     # Working directory for intermediate files
+GeoTIFF file:
+
+https://stacks.stanford.edu/file/kv186fx7335/m_3611854_se_11_060_20200726.tif
+
+This dataset is National Agriculture Imagery Program (NAIP) aerial imagery for the Castle Fire site before the fire. NAIP imagery is useful for seeing vegetation, roads, clearings, and other landscape conditions in high-resolution aerial photographs.
+
+In this workshop, it gives us a second raster example. Comparing the O'Donohue Farm orthophoto with the Castle Fire prefire NAIP image helps show that raster data can support many different kinds of interpretation, from campus-scale land use to landscape-scale fire context.
+
+## Learning Objectives
+
+By the end of this workshop, participants should be able to:
+
+1. Explain the difference between raster data and vector tile data.
+2. Open public cloud-optimized geospatial files in a browser-based map viewer.
+3. Describe why HTTP range requests matter for large geospatial files.
+4. Identify COG and PMTiles as formats designed for efficient web access.
+5. Connect a web-accessible file URL back to its SDR deposit or collection record.
+
+## Why Cloud-Optimized Formats Matter
+
+Traditional geospatial files can be very large. If a browser had to download an entire orthophoto or a global OpenStreetMap dataset before drawing anything, web mapping would be slow or impossible for many teaching and research uses.
+
+Cloud-optimized formats solve this by organizing the data so software can ask for only the part it needs.
+
+For example:
+
+```text
+The map opens.
+The viewer reads a small index from the remote file.
+The viewer requests only the image tiles or vector tiles visible on screen.
+As the user pans and zooms, the viewer requests additional pieces as needed.
 ```
 
-## The Workflow
+This is the basic idea behind HTTP range requests. The browser or mapping library can request a byte range from a remote file instead of downloading the whole file.
 
-### 1. Prepare Data (Jupyter Notebook)
+## Activity 1: Explore the Orthophoto COG
 
-```bash
-# The notebook will:
-- Install gdal-utils and dependencies
-- Examine your shapefile with ogrinfo
-- Convert shapefile to FlatGeoBuf (an intermediate format)
-- Create PMTiles from FlatGeoBuf
-- Optimize any rasters to COG format
-```
+1. Open GeoLibre Viewer:
 
-### 2. Upload to GitHub
+   https://viewer.geolibre.app/
 
-Place your cloud-optimized files in GitHub and note their raw content URLs:
-- Example: `https://raw.githubusercontent.com/[user]/[repo]/main/data/roads.pmtiles`
+2. Add the COG URL:
 
-### 3. Reference in HTML
+   https://stacks.stanford.edu/file/vq494qx9344/odm_orthophoto_COG_d.tif
 
-Update the `index.html` placeholder URLs with your actual GitHub URLs to load the data.
+3. Zoom and pan around the image.
 
-### 4. Enable GitHub Pages
+4. Observe what happens as the viewer loads imagery at different zoom levels.
 
-Once enabled, your map is live at the repository's GitHub Pages URL.
+Discussion prompts:
 
-## HTTP Range Requests: How It Works
+- What details become visible as you zoom in?
+- Why is this file a raster dataset rather than a vector dataset?
+- What would be difficult about using this image if the viewer had to download the whole file first?
 
-Traditional approach:
-```
-Browser → Download entire 1GB PMTiles file → Extract tiles → Render
-```
+## Activity 2: Explore the OpenStreetMap PMTiles Dataset
 
-Cloud-optimized approach:
-```
-Browser → HTTP GET /tiles.pmtiles Range: bytes=0-1023 → Receive 1KB index
-       → HTTP GET /tiles.pmtiles Range: bytes=50000-51000 → Receive tile
-       → Render
-```
+1. Open GeoLibre Viewer:
 
-The cloud-optimized format includes a directory at the beginning, allowing the browser to request only the bytes containing relevant tiles.
+   https://viewer.geolibre.app/
 
-## MapLibre GL JS
+2. Add the PMTiles URL:
 
-The `index.html` uses [MapLibre GL JS](https://maplibre.org/), an open-source web map library that supports:
-- Vector tiles (PMTiles)
-- Raster tiles (COG, XYZ)
-- GeoJSON sources
-- Flexible styling with JSON stylesheets
-- Full zoom/pan control
+   https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
 
-All map styling is configured in JavaScript, with comprehensive inline comments explaining each layer and style property.
+3. Navigate to different parts of the world.
 
-## Performance Considerations
+4. Change zoom levels and observe how the map detail changes.
 
-- **Initial load**: Minimal - only map tiles and viewport data are fetched
-- **Pan/zoom**: Additional HTTP range requests fetch needed tiles on demand
-- **Caching**: Browser cache and CDN support reduce repeated requests
-- **Bandwidth**: Typical map view uses 100-500KB instead of gigabytes
+Discussion prompts:
+
+- What types of features appear at low zoom levels?
+- What additional features appear as you zoom in?
+- Why are vector tiles useful for a dataset as large as OpenStreetMap?
+
+## Activity 3: Explore the Castle Fire Prefire NAIP Image
+
+1. Open GeoLibre Viewer:
+
+   https://viewer.geolibre.app/
+
+2. Add the NAIP imagery URL:
+
+   https://stacks.stanford.edu/file/kv186fx7335/m_3611854_se_11_060_20200726.tif
+
+3. Zoom and pan around the image.
+
+4. Compare the image content with the O'Donohue Farm orthophoto.
+
+Discussion prompts:
+
+- What landscape features can you identify before the fire?
+- How is this raster image similar to the farm orthophoto?
+- How is this raster image different in scale, subject, or interpretation?
+- Why might prefire imagery be useful for environmental analysis?
+
+## Activity 4: Compare COG, GeoTIFF, and PMTiles
+
+Use the examples to compare raster and vector cloud-optimized formats.
+
+| Question | O'Donohue Farm COG | Castle Fire Prefire NAIP | OpenStreetMap PMTiles |
+| --- | --- | --- | --- |
+| What kind of data is it? | Raster imagery | Raster imagery | Vector tiles |
+| What does the map draw? | Pixels from an aerial image | Pixels from aerial imagery | Points, lines, and polygons |
+| What is it good for? | Campus-scale visual interpretation and basemaps | Prefire landscape interpretation | Roads, buildings, labels, boundaries, analysis layers |
+| How does it support web access? | Internal tiling and overviews | Remote GeoTIFF access in the viewer | Internal tile index and tile archive |
+| What SDR record describes it? | https://purl.stanford.edu/vq494qx9344 | https://purl.stanford.edu/kv186fx7335 | https://purl.stanford.edu/hf224mw4004 |
+
+## Key Terms
+
+Cloud-Optimized GeoTIFF (COG):
+A GeoTIFF arranged so software can efficiently read small parts of the raster over the web.
+
+PMTiles:
+A single-file archive for vector map tiles, designed so web maps can request only the tiles needed for the current view.
+
+Raster data:
+Grid-based data made of pixels. Examples include aerial photographs, satellite imagery, scanned maps, and elevation models.
+
+Vector data:
+Coordinate-based data made of points, lines, and polygons. Examples include roads, building footprints, rivers, boundaries, and place labels.
+
+HTTP range request:
+A web request for a specific byte range within a remote file. This is one of the mechanisms that makes large cloud-optimized files practical to use in browser maps.
+
+Stanford Digital Repository (SDR):
+Stanford's repository for preserving, describing, and sharing scholarly and library-managed digital objects.
+
+## Workshop Flow
+
+1. Introduce the idea of cloud-optimized geospatial files.
+2. Open GeoLibre Viewer.
+3. Load the SDR COG orthophoto.
+4. Discuss raster data and efficient image access.
+5. Load the SDR Castle Fire prefire NAIP imagery.
+6. Discuss raster interpretation at different scales.
+7. Load the SDR PMTiles OpenStreetMap dataset.
+8. Discuss vector tiles and efficient feature rendering.
+9. Compare the raster and vector examples.
+10. Connect each direct file URL back to its SDR deposit or collection record.
 
 ## Troubleshooting
 
-**Map doesn't load:**
-- Check browser console (F12) for CORS/fetch errors
-- Verify GitHub raw content URLs are accessible
-- Ensure `index.html` is in a public repository with Pages enabled
+If a dataset does not appear:
 
-**Slow performance:**
-- Check HTTP response headers include `Accept-Ranges: bytes`
-- Verify network tab shows range requests (`206 Partial Content`)
-- Consider downsampling or tiling strategy for very large datasets
+- Confirm the URL was pasted exactly as shown in this README.
+- Check whether GeoLibre Viewer expects a specific source type or add-layer option.
+- Try refreshing the viewer and adding the source again.
+- Open the SDR deposit link to confirm the source record is available.
+- If the file is very large, give the viewer a moment to read the remote index.
 
-**Data not visible:**
-- Verify tile sources match your actual data extent
-- Check layer visibility and style definitions
-- Review MapLibre documentation for style syntax
+If the map appears but the data is hard to find:
 
-## Example: Santa Clara County Road Network
+- Use the viewer's zoom-to-layer or fit-to-data option if available.
+- For the orthophoto, zoom near the Stanford Educational Farm.
+- For the Castle Fire NAIP imagery, use the viewer's fit-to-data option if available because the site is not on the Stanford campus.
+- For OpenStreetMap PMTiles, try zooming into a familiar city or campus area.
 
-This repository includes Santa Clara County road network data prepared as:
-- **Vector source**: Santa Clara County GIS data ([RoadCenterLine dataset](https://data.sccgov.org/Transportation/RoadCenterLine/amyq-ahrs))
-- **Cloud-optimized**: `santa_clara_roads.pmtiles` (after running notebook)
-- **Style**: `data/pmtiles-roads.json` (2pt red line styling)
+## Source Links
 
-### Data Sources
+- GeoLibre Viewer: https://viewer.geolibre.app/
+- Orthophoto SDR deposit: https://purl.stanford.edu/vq494qx9344
+- Orthophoto COG file: https://stacks.stanford.edu/file/vq494qx9344/odm_orthophoto_COG_d.tif
+- Castle Fire NAIP SDR collection: https://purl.stanford.edu/kv186fx7335
+- Castle Fire prefire NAIP file: https://stacks.stanford.edu/file/kv186fx7335/m_3611854_se_11_060_20200726.tif
+- OpenStreetMap SDR deposit: https://purl.stanford.edu/hf224mw4004
+- OpenStreetMap PMTiles file: https://stacks.stanford.edu/file/hf224mw4004/20231116.pmtiles
+- PMTiles project: https://github.com/protomaps/PMTiles
+- Cloud-Optimized GeoTIFF overview: https://www.cogeo.org/
 
-- **Road Network (Vector)**: [Santa Clara County Transportation - RoadCenterLine](https://data.sccgov.org/Transportation/RoadCenterLine/amyq-ahrs/about_data) - Public GIS data from Santa Clara County via Socrata Open Data portal
-- **Reference Implementation**: [Stanford Digital Repository](https://purl.stanford.edu/hf224mw4004) - World PMTiles dataset (108 GB) demonstrating cloud-optimized formats at scale
-- **Historical Maps (Optional Raster)**: [David Rumsey Historical Map Collection](https://www.davidrumsey.com/luna/servlet/detail/RUMSEY~8~1~1578~170036:San-Mateo,-Santa-Cruz,-Santa-Clara) - Georeferenced historical maps of Santa Clara County, example of raster COG data
-- **Workshop Template**: This repository provides a simplified, manageable example suitable for learning and local experimentation
+## License and Use
 
-## Further Learning
-
-- [PMTiles Specification](https://github.com/protomaps/PMTiles)
-- [Cloud Optimized GeoTIFF](https://www.cogeo.org/)
-- [MapLibre GL JS Docs](https://maplibre.org/maplibre-gl-js/)
-- [GDAL Data Format Guide](https://gdal.org/)
-- [HTTP Range Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range)
-
-## License
-
-This workshop material is provided as-is for educational purposes. Ensure compliance with the licenses of any included data sources.
-
----
-
-**Last updated**: June 2026
-
-For questions or suggestions, open an issue on GitHub or refer to the inline documentation in the code files.
+This workshop material is provided for educational use. When reusing or redistributing data, refer to the rights and access information in the individual Stanford Digital Repository deposit records.
