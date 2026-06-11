@@ -41,6 +41,10 @@ Original Data → Examination → Format Conversion → Cloud Storage → Web Ac
 
 ### Data Preparation
 
+<a target="_blank" href="https://colab.research.google.com/github/mapninja/geo4lib_cloud_optimized/blob/main/data-preparation.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 Use the provided Jupyter notebook (`data-preparation.ipynb`) to:
 
 1. **Examine existing data**: Inspect shapefile and raster metadata
