@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud-Optimized Geospatial Data Viewer</title>
+    <title>Santa Clara County Cloud-Optimized Map</title>
     
-    <!-- MapLibre GL JS CSS: Provides default styling for the map interface -->
+    <!-- MapLibre GL JS CSS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.css" />
     
-    <!-- Inline CSS for map container and page layout -->
     <style>
         * {
             margin: 0;
@@ -17,401 +16,81 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        header {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        /* Main map container: Takes up remaining vertical space -->
-        #map {
-            flex: 1;
-            position: relative;
-            border-radius: 8px;
-            margin: 15px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            font-family: system-ui, sans-serif;
+            height: 100vh;
             overflow: hidden;
         }
         
-        /* Info panel shows status and instructions -->
-        .info-panel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            max-width: 300px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            font-size: 12px;
-            z-index: 10;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .info-panel h3 {
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 14px;
-        }
-        
-        .info-panel p {
-            margin: 5px 0;
-            color: #666;
-            line-height: 1.4;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        .status-loaded {
-            background: #4CAF50;
-        }
-        
-        .status-loading {
-            background: #FFC107;
-        }
-        
-        .status-error {
-            background: #F44336;
-        }
-        
-        footer {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 12px;
+        #map {
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <!-- Header section with title and description -->
-    <header>
-        <h1>🗺️ Cloud-Optimized Geospatial Data Viewer</h1>
-        <p>Demonstrating efficient web mapping with PMTiles and COG formats served via HTTP range requests</p>
-    </header>
-    
-    <!-- Main map container where MapLibre will render -->
+    <!-- Map container -->
     <div id="map"></div>
     
-    <!-- Information panel showing layer status and data source details -->
-    <div class="info-panel">
-        <h3>Data Layers</h3>
-        <div id="layer-status">
-            <p>Initializing map...</p>
-        </div>
-    </div>
-    
-    <!-- Footer with attribution and instructions -->
-    <footer>
-        <p>
-            💡 <strong>Tip:</strong> Use scroll/pinch to zoom, click-drag to pan. 
-            Layers load dynamically as you explore. 
-            Check browser console (F12) for network requests showing HTTP range request optimization.
-        </p>
-    </footer>
-    
-    <!-- MapLibre GL JS library: The core mapping engine -->
+    <!-- MapLibre GL JS -->
     <script src="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.js"></script>
-    
-    <!-- Protocol extension for PMTiles: Enables the pmtiles:// URL scheme in MapLibre -->
+    <!-- PMTiles protocol handler -->
     <script src="https://unpkg.com/pmtiles@3.15.0/dist/pmtiles.js"></script>
     
-    <!-- Main application script -->
     <script>
-        /**
-         * CLOUD-OPTIMIZED DATA VIEWER APPLICATION
-         * 
-         * This application demonstrates how to efficiently load and visualize geospatial
-         * data in cloud-optimized formats using MapLibre GL JS.
-         * 
-         * Key Concepts:
-         * 1. PMTiles: A container format for vector tiles that enables HTTP range requests
-         * 2. COG (Cloud-Optimized GeoTIFF): Raster format optimized for remote access
-         * 3. MapLibre GL JS: Open-source library for rendering maps in web browsers
-         * 4. HTTP Range Requests: Fetch only the bytes needed from a remote file
-         */
+        // Initialize PMTiles protocol
+        const pmtilesProtocol = new PMTiles(new URL('https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/santa_clara_roads.pmtiles').href);
         
-        // Initialize the PMTiles protocol handler
-        // This allows MapLibre to understand pmtiles:// URLs and fetch tiles efficiently
-        let pmtilesProtocol = new PMTiles(new URL('https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/santa_clara_roads.pmtiles').href);
-        
-        // Create the map instance with initial configuration
+        // Create map
         const map = new maplibregl.Map({
-            // Container: Where the map will be rendered (the #map div)
             container: 'map',
-            
-            // Style: Defines how the map looks (basemap, layers, styling)
-            // Using OpenMapTiles style via cloud-hosted CDN
             style: 'https://demotiles.maplibre.org/style.json',
-            
-            // Initial view: Where the map starts and at what zoom level
-            // Coordinates: [longitude, latitude] - Stanford Campus area
             center: [-122.169, 37.427],
-            zoom: 13,
-            
-            // Pitch: Camera angle (0 = flat, up to 60 = tilted 3D view)
+            zoom: 11,
             pitch: 0,
-            bearing: 0,
-            
-            // Enable/disable interactions
-            interactive: true,
-            attributionControl: true
+            bearing: 0
         });
         
-        /**
-         * Map Load Event Handler
-         * 
-         * Fired when the map has fully loaded and all resources are ready.
-         * This is where we add sources and layers to the map.
-         */
-        map.on('load', function() {
-            console.log('Map loaded, adding data sources...');
+        map.on('load', () => {
+            // Add historical map COG as raster source
+            map.addSource('historical-map', {
+                type: 'raster',
+                url: 'https://PLACEHOLDER_COG_URL/santa_clara_1896_cog.tif',
+                tileSize: 256
+            });
             
-            // ========== ADD DATA SOURCES ==========
+            // Add historical map layer
+            map.addLayer({
+                id: 'historical-layer',
+                type: 'raster',
+                source: 'historical-map',
+                paint: {
+                    'raster-opacity': 0.6
+                }
+            });
             
-            /**
-             * PMTiles Source Configuration
-             * 
-             * This source points to a PMTiles file containing vector tiles.
-             * PMTiles bundles all tiles into a single file with an internal index,
-             * enabling efficient HTTP range requests.
-             */
+            // Add PMTiles vector source
             map.addSource('pmtiles-source', {
                 type: 'vector',
-                // URL format: Use the protocol handler to reference PMTiles
-                // Replace PLACEHOLDER with actual GitHub raw content URL:
-                // https://raw.githubusercontent.com/username/repo/branch/data/santa_clara_roads.pmtiles
                 url: 'pmtiles://PLACEHOLDER_PMTILES_URL'
             });
             
-            /**
-             * COG Raster Source Configuration (optional)
-             * 
-             * Cloud-Optimized GeoTIFFs are raster files (aerial imagery, elevation, etc.)
-             * that support efficient remote access through HTTP range requests.
-             * This example shows how to add a COG as a raster source.
-             */
-            // Uncomment and update URL when ready to add COG data:
-            /*
-            map.addSource('cog-source', {
-                type: 'raster',
-                url: 'https://PLACEHOLDER_COG_URL/your_cog.tif',
-                tileSize: 256
-            });
-            */
-            
-            // ========== ADD LAYERS ==========
-            
-            /**
-             * Vector Tile Layer: Roads from PMTiles
-             * 
-             * This layer renders the vector tiles fetched from the PMTiles file.
-             * Vector tiles contain geometric features (lines, polygons, points) that
-             * are rendered by the browser according to the paint/layout properties.
-             */
+            // Add roads layer
             map.addLayer({
                 id: 'roads-layer',
                 type: 'line',
                 source: 'pmtiles-source',
-                // Source-layer: Which layer within the PMTiles file to use
-                // This depends on how the PMTiles were created from source data
                 'source-layer': 'roads',
                 layout: {
-                    // Line styling in layout (affects geometry)
                     'line-join': 'round',
                     'line-cap': 'round'
                 },
                 paint: {
-                    // Line styling in paint (affects appearance)
-                    'line-color': '#FF0000',     // Bright red
-                    'line-width': 2,              // 2 pixels at zoom 14
-                    'line-opacity': 0.8           // Slightly transparent
+                    'line-color': '#FF0000',
+                    'line-width': 2,
+                    'line-opacity': 0.8
                 }
             });
-            
-            /**
-             * Raster Layer: COG (optional)
-             * 
-             * Uncomment this to add a Cloud-Optimized GeoTIFF as an underlay.
-             * COGs are ideal for continuous data like satellite imagery or elevation.
-             */
-            /*
-            map.addLayer({
-                id: 'cog-layer',
-                type: 'raster',
-                source: 'cog-source',
-                paint: {
-                    'raster-opacity': 0.7
-                }
-            }, 'roads-layer');  // Insert before roads layer so roads appear on top
-            */
-            
-            // ========== FEATURE INTERACTION ==========
-            
-            /**
-             * Hover Effects and Feature Query
-             * 
-             * These handlers demonstrate how to interact with map features,
-             * providing feedback when users hover over data.
-             */
-            
-            // Change cursor to pointer when hovering over features
-            map.on('mouseenter', 'roads-layer', function() {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-            
-            map.on('mouseleave', 'roads-layer', function() {
-                map.getCanvas().style.cursor = '';
-            });
-            
-            // Query feature properties on click
-            map.on('click', 'roads-layer', function(e) {
-                // Get the feature properties (attributes from the source data)
-                const properties = e.features[0].properties;
-                console.log('Clicked feature properties:', properties);
-                
-                // Display a popup with feature information
-                new maplibregl.Popup()
-                    .setLngLat(e.lngLat)
-                    .setHTML(`
-                        <div style="font-size: 12px;">
-                            <strong>Road Feature</strong><br>
-                            ${Object.entries(properties)
-                                .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
-                                .join('<br>')}
-                        </div>
-                    `)
-                    .addTo(map);
-            });
-            
-            // ========== STATUS MONITORING ==========
-            
-            /**
-             * Source Data Loading Events
-             * 
-             * Monitor when data sources start and finish loading.
-             * This helps users understand the current state of data fetching.
-             */
-            
-            // Track data source events
-            map.on('sourcedata', function(e) {
-                if (e.sourceId === 'pmtiles-source') {
-                    updateLayerStatus('PMTiles', e.isSourceLoaded ? 'loaded' : 'loading');
-                }
-                if (e.sourceId === 'cog-source') {
-                    updateLayerStatus('COG Imagery', e.isSourceLoaded ? 'loaded' : 'loading');
-                }
-            });
-            
-            // Handle source errors
-            map.on('error', function(e) {
-                if (e.sourceId) {
-                    updateLayerStatus(e.sourceId, 'error');
-                    console.error('Map source error:', e);
-                }
-            });
-            
-            // Initial status update
-            updateLayerStatus('PMTiles', 'loading');
-            updateLayerStatus('Map Tiles', 'loaded');
         });
-        
-        /**
-         * Update the status display for data layers
-         * Shows users which layers are loaded, loading, or have errors
-         */
-        function updateLayerStatus(layerName, status) {
-            const statusPanel = document.getElementById('layer-status');
-            let statusClass = 'status-' + status;
-            let statusText = status.charAt(0).toUpperCase() + status.slice(1);
-            
-            // Check if layer already exists in panel
-            let layerDiv = document.getElementById('layer-' + layerName);
-            if (!layerDiv) {
-                layerDiv = document.createElement('p');
-                layerDiv.id = 'layer-' + layerName;
-                statusPanel.appendChild(layerDiv);
-            }
-            
-            layerDiv.innerHTML = `
-                <span class="status-indicator ${statusClass}"></span>
-                <strong>${layerName}:</strong> ${statusText}
-            `;
-        }
-        
-        /**
-         * IMPORTANT: Configuration Steps
-         * 
-         * Before this map works, you must:
-         * 
-         * 1. Prepare your data:
-         *    - Run data-preparation.ipynb to convert shapefiles to PMTiles
-         *    - Optionally convert rasters to COG format
-         * 
-         * 2. Upload to GitHub:
-         *    - Push all files to your repository
-         *    - Note the raw content URLs for your data files
-         * 
-         * 3. Update placeholders in this file:
-         *    - Replace PLACEHOLDER_PMTILES_URL with the GitHub raw URL
-         *    - Replace PLACEHOLDER_COG_URL if using raster data
-         * 
-         * 4. Enable GitHub Pages:
-         *    - Settings → Pages → Select 'main' branch
-         *    - Your map will be live at: https://username.github.io/repo-name/
-         * 
-         * 5. Verify network requests:
-         *    - Open DevTools (F12)
-         *    - Go to Network tab
-         *    - Look for responses with "206 Partial Content"
-         *    - This indicates successful HTTP range requests
-         */
-        
-        /**
-         * UNDERSTANDING HTTP RANGE REQUESTS
-         * 
-         * Traditional file serving:
-         *   Browser: "Send me mountain_range.pmtiles"
-         *   Server: *sends entire 500MB file*
-         *   Browser: *waits forever, extracts tiles, renders*
-         * 
-         * Cloud-optimized approach:
-         *   Browser: "Send me bytes 0-4096 of mountain_range.pmtiles" (the directory)
-         *   Server: *sends 4KB*
-         *   Browser: *reads directory, figures out what tiles it needs*
-         *   Browser: "Send me bytes 50000-51000"
-         *   Server: *sends the specific tile*
-         *   Browser: *renders immediately*
-         * 
-         * The key insight: The cloud-optimized format includes an index at the beginning,
-         * so the browser knows exactly which bytes to request without downloading the whole file.
-         */
     </script>
 </body>
 </html>
